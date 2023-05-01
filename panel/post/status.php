@@ -9,18 +9,15 @@ if(isset($_GET['post_id']) && $_GET['post_id'] !== '')
     $statement = $pdo->prepare($query);
     $statement->execute([$_GET['post_id']]);
     $post = $statement->fetch();
-    $basePath = dirname(dirname(__DIR__));
-    if(file_exists($basePath . $post->image))
+    if($post !== false)
     {
-        unlink($basePath . $post->image);
+        $status = ($post->status == 10) ? 0 : 10;
+        $query = 'UPDATE php_project.posts SET status = ? WHERE id = ?';
+        $statement = $pdo->prepare($query);
+        $statement->execute([$status, $_GET['post_id']]);
     }
 
-    global $pdo;
-    $query = 'DELETE FROM php_project.posts WHERE id = ?';
-    $statement = $pdo->prepare($query);
-    $statement->execute([$_GET['post_id']]);
-
-}
-redirect('panel/post');
+    }
+    redirect('panel/post');
 
 ?>
